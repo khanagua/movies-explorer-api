@@ -8,7 +8,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const rateLimit = require('express-rate-limit');
 // const { method } = require('./utils/method');
 const userRouter = require('./routes/users');
-// const movieRouter = require('./routes/movies');
+const movieRouter = require('./routes/movies');
 const { authMiddlewares } = require('./middlewares/authMiddlewares');
 const { errorsMiddlewares } = require('./middlewares/errorsMiddlewares');
 const { login, addUser } = require('./controllers/users');
@@ -75,7 +75,7 @@ app.post(
 
 // роуты, которым авторизация нужна
 app.use('/users', authMiddlewares, userRouter);
-// app.use('/movies', authMiddlewares, movieRouter);
+app.use('/movies', authMiddlewares, movieRouter);
 
 app.use('*', () => {
   throw new NotFoundError('Такой страницы не существует');
