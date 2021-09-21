@@ -5,16 +5,11 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cors = require('cors');
 const { errors } = require('celebrate');
-const rateLimit = require('express-rate-limit');
+const limiter = require('./utils/rateLimit');
 const router = require('./routes/index');
 // const { method } = require('./utils/method');
 const { errorsMiddlewares } = require('./middlewares/errorsMiddlewares');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
 
 const { PORT = 3000 } = process.env;
 const app = express();
