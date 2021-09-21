@@ -109,9 +109,16 @@ const getUser = (req, res, next) => {
     });
 };
 
+// разлогиневат пользователя
+const logout = (req, res) => {
+  res.clearCookie('jwt');
+  res.status(201).send({ message: 'Вы успешно вышли из аккаунта' });
+};
+
 module.exports = {
   addUser,
   updateUser,
   login,
   getUser,
+  logout,
 };

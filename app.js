@@ -11,7 +11,7 @@ const userRouter = require('./routes/users');
 const movieRouter = require('./routes/movies');
 const { authMiddlewares } = require('./middlewares/authMiddlewares');
 const { errorsMiddlewares } = require('./middlewares/errorsMiddlewares');
-const { login, addUser } = require('./controllers/users');
+const { login, addUser, logout } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -73,11 +73,13 @@ app.post(
   }), addUser,
 );
 
+app.post('/signout', logout);
+
 // роуты, которым авторизация нужна
 app.use('/users', authMiddlewares, userRouter);
 app.use('/movies', authMiddlewares, movieRouter);
 
-app.use('*', () => {
+app.use('*', authMiddlewares, () => {
   throw new NotFoundError('Такой страницы не существует');
 });
 //
