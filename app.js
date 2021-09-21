@@ -2,12 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const helmet = require('helmet');
-const cors = require('cors');
 const { errors } = require('celebrate');
-const limiter = require('./utils/rateLimit');
+const cors = require('cors');
+const helmet = require('helmet');
+const { mongodbOptions, URLMongodb, corsOptions } = require('./utils/config');
+const { limiter } = require('./utils/rateLimit');
 const router = require('./routes/index');
-// const { method } = require('./utils/method');
 const { errorsMiddlewares } = require('./middlewares/errorsMiddlewares');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -15,32 +15,12 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(requestLogger);
-
 app.use(limiter);
-
 app.use(cookieParser());
-
-mongoose.connect('mongodb://localhost:27017/moviedb', {
-  useNewUrlParser: true,
-  // useCreateIndex: true,
-  // useFindAndModify: false,
-  useUnifiedTopology: true,
-});
-
-const corsWhitelist = [
-  'https://movies.khanagua.nomoredomains.club',
-  'api.movies.khanagua.nomoredomains.club',
-  'https://localhost:3000',
-];
-
-app.use(cors({
-  credentials: true,
-  origin: corsWhitelist,
-}));
-
+mongoose.connect(URLMongodb, mongodbOptions);
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(helmet());
 
 app.use(router);
