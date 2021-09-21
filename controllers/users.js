@@ -77,7 +77,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'secret-key',
+        NODE_ENV === 'production' ? JWT_SECRET : 'life-is-an-adventure,not-a-misery',
         { expiresIn: '7d' },
       );
       res

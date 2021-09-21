@@ -10,7 +10,7 @@ module.exports.authMiddlewares = (req, res, next) => {
   } else {
     let payload;
     try {
-      payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'secret-key');
+      payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'life-is-an-adventure,not-a-misery');
     } catch (err) {
       next(new UnauthorizedError('Нужно пройти авторизацию'));
     }
