@@ -7,7 +7,7 @@
 ## Ссылки
 **Публичный IP** 178.154.217.228  
 <!-- **Frontend** https://movies.khanagua.nomoredomains.club   -->
-**Backend** api.movies.khanagua.nomoredomains.club 
+**Backend** https://api.movies.khanagua.nomoredomains.club 
 
 ## Запуск проекта
 `npm run start` — запускает сервер  

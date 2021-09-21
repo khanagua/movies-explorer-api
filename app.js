@@ -4,15 +4,11 @@ const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cors = require('cors');
-const { celebrate, Joi, errors } = require('celebrate');
+const { errors } = require('celebrate');
 const rateLimit = require('express-rate-limit');
+const router = require('./routes/index');
 // const { method } = require('./utils/method');
-const userRouter = require('./routes/users');
-const movieRouter = require('./routes/movies');
-const { authMiddlewares } = require('./middlewares/authMiddlewares');
 const { errorsMiddlewares } = require('./middlewares/errorsMiddlewares');
-const { login, addUser, logout } = require('./controllers/users');
-const NotFoundError = require('./errors/not-found-error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const limiter = rateLimit({
@@ -52,37 +48,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(helmet());
 
-// роуты, не требующие авторизации,
-app.post(
-  '/signin',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required(),
-    }),
-  }), login,
-);
-app.post(
-  '/signup',
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
-      email: Joi.string().required().email(),
-      password: Joi.string().required(),
-    }),
-  }), addUser,
-);
-
-app.post('/signout', logout);
-
-// роуты, которым авторизация нужна
-app.use('/users', authMiddlewares, userRouter);
-app.use('/movies', authMiddlewares, movieRouter);
-
-app.use('*', authMiddlewares, () => {
-  throw new NotFoundError('Такой страницы не существует');
-});
-//
+app.use(router);
 app.use(errorLogger); // логгер ошибок библиотеки winston
 app.use(errors()); // обработчик ошибок celebrate
 app.use(errorsMiddlewares); // централизованный обработчик ошибок
