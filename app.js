@@ -11,13 +11,16 @@ const router = require('./routes/index');
 const { errorsMiddlewares } = require('./middlewares/errorsMiddlewares');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, MONGO, NODE_ENV } = process.env;
 const app = express();
 
 app.use(requestLogger);
 app.use(limiter);
 app.use(cookieParser());
-mongoose.connect(URLMongodb, mongodbOptions);
+mongoose.connect(
+  NODE_ENV !== 'production' ? URLMongodb : MONGO,
+  mongodbOptions,
+);
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
