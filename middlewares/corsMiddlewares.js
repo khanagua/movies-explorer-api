@@ -1,7 +1,7 @@
 module.exports.corsMiddlewares = (req, res, next) => {
   const allowedCors = [
-    'https://mesto.khanagua.nomoredomains.club',
-    'http://mesto.khanagua.nomoredomains.club',
+    'https://movies.khanagua.nomoredomains.club',
+    'http://movies.khanagua.nomoredomains.club',
     'localhost:3000',
   ];
 

@@ -1,5 +1,6 @@
-const { celebrate, Joi } = require('celebrate');
+const { celebrate } = require('celebrate');
 const userRouter = require('express').Router();
+const { VALIDATION_OPTIONS } = require('../utils/validation');
 
 const { getUser, updateUser } = require('../controllers/users');
 
@@ -7,13 +8,6 @@ const { getUser, updateUser } = require('../controllers/users');
 userRouter.get('/me', getUser);
 
 // обновляет информацию о пользователе (email и имя)
-userRouter.patch('/me',
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().required().min(2).max(30),
-      email: Joi.string().required(),
-    }),
-  }),
-  updateUser);
+userRouter.patch('/me', celebrate(VALIDATION_OPTIONS.updateUser), updateUser);
 
 module.exports = userRouter;

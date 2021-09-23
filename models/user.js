@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { isEmail } = require('validator');
+const { MESSAGES } = require('../utils/messages');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -9,7 +10,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (v) => isEmail(v),
-      message: 'Тут нужна электронная почта',
+      message: MESSAGES.needEmail,
     },
   },
   password: {
@@ -22,7 +23,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 2,
     maxlength: 30,
-    default: 'Имя пользователя',
   },
 });
 

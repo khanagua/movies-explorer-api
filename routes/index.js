@@ -1,31 +1,16 @@
 const router = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
+const { celebrate } = require('celebrate');
 const userRouter = require('./users');
 const movieRouter = require('./movies');
 const { authMiddlewares } = require('../middlewares/authMiddlewares');
 const { login, addUser, logout } = require('../controllers/users');
 const NotFoundError = require('../errors/not-found-error');
+const { VALIDATION_OPTIONS } = require('../utils/validation');
+const { MESSAGES } = require('../utils/messages');
 
 // роуты, не требующие авторизации,
-router.post(
-  '/signin',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required(),
-    }),
-  }), login,
-);
-router.post(
-  '/signup',
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().min(2).max(30),
-      email: Joi.string().required().email(),
-      password: Joi.string().required(),
-    }),
-  }), addUser,
-);
+router.post('/signin', celebrate(VALIDATION_OPTIONS.signin), login);
+router.post('/signup', celebrate(VALIDATION_OPTIONS.signup), addUser);
 
 router.post('/signout', logout);
 
@@ -34,7 +19,7 @@ router.use('/users', authMiddlewares, userRouter);
 router.use('/movies', authMiddlewares, movieRouter);
 
 router.use('*', authMiddlewares, () => {
-  throw new NotFoundError('Такой страницы не существует');
+  throw new NotFoundError(MESSAGES.pageNotExist);
 });
 
 module.exports = router;

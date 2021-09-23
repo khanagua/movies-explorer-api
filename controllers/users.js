@@ -7,6 +7,7 @@ const BadRequestError = require('../errors/bad-request-error');
 const ConflictRequestError = require('../errors/conflict-request-error');
 const NotFoundError = require('../errors/not-found-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
+const { MESSAGES } = require('../utils/messages');
 
 const options = {
   new: true, // обработчик then получит на вход обновлённую запись
@@ -27,17 +28,17 @@ const addUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(200).send({
+    .then((user) => res.send({
       name: user.name,
       _id: user._id,
       email: user.email,
     }))
     .catch((err) => {
       if (err.name === ERROR_NAME.validation) {
-        next(new BadRequestError('Переданы некорректные или неполные данные пользователя'));
+        next(new BadRequestError(MESSAGES.incorrectDataUser));
       }
-      if (err.name === 'MongoError' && err.code === 11000) {
-        next(new ConflictRequestError('Пользователь с такой почтой уже существует'));
+      if (err.code === 11000) {
+        next(new ConflictRequestError(MESSAGES.doubleEmail));
       }
       next(err);
     });
@@ -52,17 +53,20 @@ const updateUser = (req, res, next) => {
     options,
   )
     .orFail(new Error(ERROR_NAME.notValidId))
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.message === ERROR_NAME.notValidId) {
-        next(new NotFoundError('Пользователь не найден'));
+        next(new NotFoundError(MESSAGES.userNotFound));
+      }
+      if (err.codeName === 'DuplicateKey') {
+        next(new ConflictRequestError(MESSAGES.doubleEmail));
       }
       switch (err.name) {
         case ERROR_NAME.validation:
-          next(new BadRequestError('Переданы некорректные или неполные данные'));
+          next(new BadRequestError(MESSAGES.incorrectDataUser));
           break;
         case ERROR_NAME.cast:
-          next(new BadRequestError('Пользователь не найден'));
+          next(new BadRequestError(MESSAGES.userNotFound));
           break;
         default:
           next(err);
@@ -88,11 +92,11 @@ const login = (req, res, next) => {
           // sameSite: true,
         })
         .status(200)
-        .send({ message: 'Куки авторизации отправлены' });
+        .send({ message: MESSAGES.cookiesSent });
     })
     .catch((err) => {
       if (err.message === 'IncorrectData') {
-        next(new UnauthorizedError('Неправильная почта или пароль'));
+        next(new UnauthorizedError(MESSAGES.IncorrectDataLogin));
       }
       next(err);
     });
@@ -101,10 +105,10 @@ const login = (req, res, next) => {
 // возвращает информацию о пользователе (email и имя)
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === ERROR_NAME.cast) {
-        next(new BadRequestError('Пользователь не найден'));
+        next(new BadRequestError(MESSAGES.userNotFound));
       }
       next(err);
     });
@@ -113,7 +117,7 @@ const getUser = (req, res, next) => {
 // разлогиневат пользователя
 const logout = (req, res) => {
   res.clearCookie('jwt');
-  res.status(201).send({ message: 'Вы успешно вышли из аккаунта' });
+  res.status(201).send({ message: MESSAGES.successfullyLogout });
 };
 
 module.exports = {

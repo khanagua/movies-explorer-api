@@ -3,11 +3,12 @@ const { ERROR_NAME } = require('../errors/errors');
 const BadRequestError = require('../errors/bad-request-error');
 const NotFoundError = require('../errors/not-found-error');
 const ForbiddenError = require('../errors/forbidden-error');
+const { MESSAGES } = require('../utils/messages');
 
 // возвращает все сохранённые пользователем фильмы
 const getSavedMovies = (req, res, next) => {
   Movie.find({})
-    .then((movies) => res.status(200).send(movies))
+    .then((movies) => res.send(movies))
     .catch(next);
 };
 
@@ -40,54 +41,36 @@ const addMovie = (req, res, next) => {
     nameEN,
     owner: req.user._id,
   })
-    .then((movie) => res.status(200).send(movie))
+    .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === ERROR_NAME.validation) {
-        next(new BadRequestError('Переданы некорректные или неполные данные фильма'));
+        next(new BadRequestError(MESSAGES.incorrectDataMovie));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
 // удаляет сохранённый фильм по id
 const deleteMovie = (req, res, next) => {
-  Movie.findOne({ movieId: req.params.movieId })
+  Movie.findById(req.params.movieId)
     .orFail(new Error(ERROR_NAME.notValidId))
+    // eslint-disable-next-line consistent-return
     .then((movie) => {
-      if (movie.owner.toSting() !== req.user._id.toString()) {
-        next(new ForbiddenError('Нельзя удалить чужой фильм'));
+      if (movie.owner.toString() !== req.user._id.toString()) {
+        next(new ForbiddenError(MESSAGES.noRightsFilm));
       } else {
-        Movie.findOneAndRemove({ movieId: req.params.movieId })
-          .then(() => res.status(200).send({ message: 'Фильм удален' }));
+        return Movie.findByIdAndDelete(req.params.movieId)
+          .then(() => res.send({ message: MESSAGES.movieDeleted }));
       }
     })
     .catch((err) => {
       if (err.name === ERROR_NAME.cast) {
-        next(new BadRequestError('Фильм не найден'));
+        next(new BadRequestError(MESSAGES.movieNotFound));
       }
       switch (err.message) {
         case ERROR_NAME.notValidId:
-          next(new NotFoundError('Фильм не найден'));
-          break;
-        case ERROR_NAME.notOwnerMovie:
-          next(new ForbiddenError('Нельзя удалить чужой фильм'));
-          break;
-        default:
-          next(err);
-      }
-    });
-
-  Movie.findOneAndRemove({ movieId: req.params.movieId })
-    .then(() => {
-      res.status(200).send({ message: 'Фильм удален' });
-    })
-    .catch((err) => {
-      if (err.name === ERROR_NAME.cast) {
-        next(new BadRequestError('Фильм не найден'));
-      }
-      switch (err.message) {
-        case ERROR_NAME.notValidId:
-          next(new NotFoundError('Фильм не найден'));
+          next(new NotFoundError(MESSAGES.movieNotFound));
           break;
         default:
           next(err);

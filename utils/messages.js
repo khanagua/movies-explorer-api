@@ -1,0 +1,17 @@
+module.exports.MESSAGES = {
+  incorrectDataMovie: 'Переданы некорректные или неполные данные фильма',
+  noRightsFilm: 'Нельзя удалить чужой фильм',
+  movieDeleted: 'Фильм удален',
+  movieNotFound: 'Фильм не найден',
+  incorrectDataUser: 'Переданы некорректные или неполные данные пользователя',
+  doubleEmail: 'Пользователь с такой почтой уже существует',
+  userNotFound: 'Пользователь не найден',
+  cookiesSent: 'Куки авторизации отправлены',
+  IncorrectDataLogin: 'Неправильная почта или пароль',
+  successfullyLogout: 'Вы успешно вышли из аккаунта',
+  authorizationRequired: 'Нужно пройти авторизацию',
+  errorServer: 'Ошибка на сервере',
+  needLink: 'Тут нужна ссылка',
+  needEmail: 'Тут нужна электронная почта',
+  pageNotExist: 'Такой страницы не существует',
+};
