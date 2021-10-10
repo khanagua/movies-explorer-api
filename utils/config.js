@@ -9,6 +9,7 @@ const corsWhitelist = [
   'https://movies.khanagua.nomoredomains.club',
   'api.movies.khanagua.nomoredomains.club',
   'https://localhost:3000',
+  'http://localhost:3000',
 ];
 
 const corsOptions = {
