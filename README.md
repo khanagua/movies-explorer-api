@@ -5,8 +5,8 @@
 > - операции с фильмами и пользователями. 
 
 ## Ссылки
-**Публичный IP** 178.154.217.228  
-<!-- **Frontend** https://movies.khanagua.nomoredomains.club   -->
+**Публичный IP** 84.252.140.138  
+**Frontend** https://movies.khanagua.nomoredomains.club  
 **Backend** https://api.movies.khanagua.nomoredomains.club 
 
 ## Запуск проекта
