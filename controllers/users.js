@@ -91,7 +91,7 @@ const login = (req, res, next) => {
           httpOnly: true,
           // sameSite: true,
           sameSite: 'None',
-          // secure: true,
+          secure: true,
         })
         .status(200)
         .send({ message: MESSAGES.cookiesSent });
